@@ -59,18 +59,13 @@ class PedestrianTracker:
         # Tracking zones and movements
         self.zone_tracks = {
             'A': set(),
-            'D': set(),
-            'C': set()
+            'B': set()
         }
         
         # Tracking zone transitions
         self.zone_transitions = {
-            'A_to_D': set(),
-            'A_to_C': set(),
-            'D_to_A': set(),
-            'D_to_C': set(),
-            'C_to_A': set(),
-            'C_to_D': set()
+            'A_to_B': set(),
+            'B_to_A': set()
         }
 
         
@@ -82,7 +77,7 @@ class PedestrianTracker:
         
         self.encoder = FeatureExtractor()
 
-    def detect_and_track(self, frame, zoneA, zoneD, zoneC):
+    def detect_and_track(self, frame, zoneA, zoneB):
         results = self.model(frame, conf=0.5)[0]
         self.frame_transitions.clear()
 
@@ -108,7 +103,7 @@ class PedestrianTracker:
 
         # Process tracks - get positions, update trails, track zone occupancy
         track_data = []
-        current_zone_tracks = {'A': set(), 'D': set(), 'C': set()}
+        current_zone_tracks = {'A': set(), 'B': set()}
         
         for track in tracks:
             if not track.is_confirmed():
@@ -132,12 +127,10 @@ class PedestrianTracker:
             if cv2.pointPolygonTest(zoneA, (float(center_x), float(center_y)), False) >= 0:
                 current_zone = 'A'
                 current_zone_tracks['A'].add(track_id)
-            elif cv2.pointPolygonTest(zoneD, (float(center_x), float(center_y)), False) >= 0:
-                current_zone = 'D'
-                current_zone_tracks['D'].add(track_id)
-            elif cv2.pointPolygonTest(zoneC, (float(center_x), float(center_y)), False) >= 0:
-                current_zone = 'C'
-                current_zone_tracks['C'].add(track_id)
+            elif cv2.pointPolygonTest(zoneB, (float(center_x), float(center_y)), False) >= 0:
+                current_zone = 'B'
+                current_zone_tracks['B'].add(track_id)
+            
             
             # Track zone transitions
             if current_zone:
@@ -168,24 +161,18 @@ class PedestrianTracker:
         return track_data, raw_detections, current_zone_tracks
 
 def setup_counting_zones(width, height, zone_config=None):
-    #For IntersectionB
-    zone_A = np.array([[475, 497], [738, 489],[1072, 527],[1075, 597], [232,718]], np.int32)
-    zoneD = np.array([[1070,526], [1058, 604],[1398, 719],[1847,662], [1844, 504], [1623,465]], np.int32)
-    zoneC = np.array([[260,699], [1040, 603],[1377, 703],[1833,719], [1840, 984], [19,986]], np.int32)  
-
-    #For IntersectionC
-    # zone_A = np.array([[344, 537], [309, 649],[1242, 600],[1137, 517]], np.int32)
-    # zoneD = np.array([[1159, 513], [1251, 603],[1824, 533],[1687,482]], np.int32)
-    # zoneC = np.array([[297,685], [956, 642],[1584, 579],[1822,607], [1821, 946], [167,956], [208,743]], np.int32)  
-    return zone_A, zoneD, zoneC
+    #For Path1 and Path2
+    zone_A = np.array([[1100, 564], [628, 656],[581, 443],[826, 424]], np.int32)
+    zoneB = np.array([[628, 670], [1100, 580],[1716, 753],[734, 980]], np.int32)
+    
+    return zone_A, zoneB
 
 def process_video(video, output_video=True):
 
-    session="Session_02292024"
-    output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionB/{video}'
+    session="Session_02152024"
+    output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/{video}'
     os.makedirs(output_dir, exist_ok=True)
-    os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionB/Video/gopro01/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionC/Video/gopro08/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
+    os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path2/Video/gopro07/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
     video_name = video +"_MUTED.MP4"
     csv_name = video + "full_pedestrian_flow.csv"
     video_path = os.path.join(output_dir, video_name)
@@ -197,7 +184,7 @@ def process_video(video, output_video=True):
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     print("Total frame count:", total_frames)
     
-    zoneA, zoneD, zoneC = setup_counting_zones(frame_width, frame_height)
+    zoneA, zoneB = setup_counting_zones(frame_width, frame_height)
     
     tracker = PedestrianTracker()
     
@@ -210,20 +197,11 @@ def process_video(video, output_video=True):
             'Total_Detections',
             'Total_Tracked',
             'Zone_A_Count', 
-            'Zone_D_Count', 
-            'Zone_C_Count',
-            'A_to_D', 
-            'A_to_C', 
-            'D_to_A', 
-            'D_to_C',
-            'C_to_A', 
-            'C_to_D',
-            'Total_A_to_D', 
-            'Total_A_to_C', 
-            'Total_D_to_A', 
-            'Total_D_to_C',
-            'Total_C_to_A', 
-            'Total_C_to_D'
+            'Zone_B_Count', 
+            'A_to_B', 
+            'B_to_A', 
+            'Total_A_to_B', 
+            'Total_B_to_A'
         ])
     
     # Set up video writer if needed
@@ -251,15 +229,14 @@ def process_video(video, output_video=True):
         frame_count += 1
         
         # Detect and track
-        tracks, raw_detections, current_zone_tracks = tracker.detect_and_track(frame, zoneA, zoneD, zoneC)
+        tracks, raw_detections, current_zone_tracks = tracker.detect_and_track(frame, zoneA, zoneB)
         
         if output_video:
             vis_frame = frame.copy()
             
             # Draw zones
             cv2.polylines(vis_frame, [zoneA], True, (255, 0, 0), 2)  # Zone A in blue
-            cv2.polylines(vis_frame, [zoneD], True, (0, 0, 255), 2)  # Zone D in red
-            cv2.polylines(vis_frame, [zoneC], True, (0, 255, 0), 2)  # Zone C in green
+            cv2.polylines(vis_frame, [zoneB], True, (0, 0, 255), 2)  # Zone B in red
 
             for det in raw_detections:
                 x1, y1, x2, y2, conf = det
@@ -282,10 +259,8 @@ def process_video(video, output_video=True):
                 # Define color based on which zone the person is in
                 if track_id in current_zone_tracks['A']:
                     color = (255, 0, 255)
-                elif track_id in current_zone_tracks['D']:
+                elif track_id in current_zone_tracks['B']:
                     color = (255, 0, 0) 
-                elif track_id in current_zone_tracks['C']:
-                    color = (0, 0, 255)  
                 else:
                     color = (0, 255, 0)
                 
@@ -311,7 +286,7 @@ def process_video(video, output_video=True):
             # Add zone occupancy info
             cv2.putText(
                 vis_frame,
-                f'Frame: {frame_count} | A: {len(current_zone_tracks["A"])} D: {len(current_zone_tracks["D"])} C: {len(current_zone_tracks["C"])}',
+                f'Frame: {frame_count} | A: {len(current_zone_tracks["A"])} B: {len(current_zone_tracks["B"])}',
                 (10, 30),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.7,
@@ -322,12 +297,8 @@ def process_video(video, output_video=True):
             y_offset +=30
             
             transition_colors = {
-                'A_to_D': (255, 165, 0),  # Orange
-                'A_to_C': (255, 0, 255),  # Magenta
-                'D_to_A': (0, 165, 255),  # Light Orange
-                'D_to_C': (0, 255, 255), # Cyan
-                'C_to_A': (165, 255, 0), # Lime
-                'C_to_D': (255, 0, 165)  # Pink
+                'A_to_B': (255, 165, 0),  # Orange
+                'B_to_A': (255, 0, 255)
             }
 
             # Define table parameters
@@ -388,20 +359,11 @@ def process_video(video, output_video=True):
                 len(raw_detections),
                 len(tracks),
                 len(current_zone_tracks['A']),
-                len(current_zone_tracks['D']),
-                len(current_zone_tracks['C']),
-                tracker.frame_transitions['A_to_D'],
-                tracker.frame_transitions['A_to_C'],
-                tracker.frame_transitions['D_to_A'],
-                tracker.frame_transitions['D_to_C'],
-                tracker.frame_transitions['C_to_A'],
-                tracker.frame_transitions['C_to_D'],
-                tracker.total_zone_transitions['A_to_D'],
-                tracker.total_zone_transitions['A_to_C'],
-                tracker.total_zone_transitions['D_to_A'],
-                tracker.total_zone_transitions['D_to_C'],
-                tracker.total_zone_transitions['C_to_A'],
-                tracker.total_zone_transitions['C_to_D']
+                len(current_zone_tracks['B']),
+                tracker.frame_transitions['A_to_B'],
+                tracker.frame_transitions['B_to_A'],
+                tracker.total_zone_transitions['A_to_B'],
+                tracker.total_zone_transitions['B_to_A']
             ])
         
     cap.release()
@@ -410,15 +372,12 @@ def process_video(video, output_video=True):
     
 
 def main():
-    #For intersectionB
-    #video_list = ["GH030015", "GH050015","GH070015","GH090015"]
+    #For Path1
 
-    #video_list = ["GH010006", "GH020006","GH030006","GH040006","GH050006","GH060006","GH070006","GH080006","GH090006"]
-    
-    #For intersection C - Session_02292024 
-    #video_list = ["GH010061"]
-    #video_list = ["GH010008","GH020008","GH030008","GH040008","GH050008","GH060008","GH070008","GH080008","GH090008","GH100008"]
-    #video_list = ["GH010009","GH020009","GH030009","GH040009","GH050009","GH060009","GH070009","GH080009","GH090009","GH100009"]
+    #video_list = ["GH010011"]
+    #video_list = ["GH020011","GH030011","GH040011","GH050011","GH060011","GH070011","GH080011","GH090011"]
+
+    #video_list = ["GH010006","GH020006","GH030006","GH040006","GH050006"  ,"GH060006" ,"GH070006" , "GH080006" ,"GH090006","GH100006"]
     video_list = ["GH010468","GH020468","GH030468","GH040468","GH050468","GH060468","GH070468","GH080468","GH090468","GH100468"]
     total_start_time = time.time()
     for video in video_list:
