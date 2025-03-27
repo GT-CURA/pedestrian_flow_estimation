@@ -182,23 +182,29 @@ def setup_counting_zones(width, height, zone_config=None):
     # zoneD = np.array([[1072,687], [1365, 315],[1829, 341],[1805,785]], np.int32)   
     # zoneE = np.array([[1000,285], [1212, 310],[1444, 172],[1249, 164]], np.int32)  
 
-    zone_A = np.array([[301, 469], [457, 381],[749, 412],[480, 539]], np.int32)
-    zoneC = np.array([[313,627], [651, 465],[950, 505],[1066,658], [703,957]], np.int32)
-    zoneD = np.array([[965, 508],[1072,653], [1775, 748],[1764, 339],[1237,321]], np.int32)   
-    zoneE = np.array([[670,457], [950, 500],[1444, 172],[1249, 164]], np.int32) 
-   
+    # zone_A = np.array([[301, 469], [457, 381],[749, 412],[480, 539]], np.int32)
+    # zoneC = np.array([[313,627], [651, 465],[950, 505],[1066,658], [703,957]], np.int32)
+    # zoneD = np.array([[965, 508],[1072,653], [1775, 748],[1764, 339],[1237,321]], np.int32)   
+    # zoneE = np.array([[670,457], [950, 500],[1444, 172],[1249, 164]], np.int32) 
+
+    zoneE = np.array([[571,389], [1488, 460],[1595, 116],[1175, 85], [583,374]], np.int32)   
+    zone_A = np.array([[7, 459], [82, 402],[458, 424],[42, 653]], np.int32)
+    zoneC = np.array([[19,704], [200, 1300],[1100, 1050],[1384,488], [548, 414]], np.int32)  
+    zoneD = np.array([[1125, 1000], [1601, 241],[2000, 100],[1900,1000]], np.int32)
     return zone_A, zoneD, zoneC, zoneE
 
 def process_video(video, output_video=True):
 
     session="Session_02152024/"
     output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionD/{video}'
+    output_dir2 = f'/home/schivilkar/dev/processed_video/{session}/IntersectionD/{video}'
+
     os.makedirs(output_dir, exist_ok=True)
-    os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD/Video/gopro03/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
+    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD/Video/gopro03/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
     #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionC/Video/gopro08/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
     video_name = video +"_MUTED.MP4"
     csv_name = video + "full_pedestrian_flow.csv"
-    video_path = os.path.join(output_dir, video_name)
+    video_path = os.path.join(output_dir2, video+"_CROPPED7.MP4")
 
     cap = cv2.VideoCapture(video_path)
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
@@ -467,7 +473,8 @@ def process_video(video, output_video=True):
     
 
 def main():
-    video_list = ["GH010012", "GH020012", "GH030012", "GH040012", "GH050012", "GH060012", "GH070012", "GH080012", "GH090012"]
+    video_list = ["GH010012"]
+                  # "GH020012", "GH030012", "GH040012", "GH050012", "GH060012", "GH070012", "GH080012", "GH090012"]
     #GH010012.MP4  GH020012.MP4  GH030012.MP4  GH040012.MP4  GH050012.MP4  GH060012.MP4  GH070012.MP4  GH080012.MP4  GH090012.MP4
     total_start_time = time.time()
     for video in video_list:
