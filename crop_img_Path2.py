@@ -10,27 +10,25 @@ if __name__ == '__main__':
     scaling_factor = 2
     
     # Define ROI (Region of Interest) coordinates 
-    x_start = 200
-    y_start = 450
-    x_end = 1800
+    x_start = 550
+    y_start = 350
+    x_end = 1200
     y_end = 900
 
     crop_width = x_end - x_start
     crop_height = y_end - y_start
 
     
-    filenames = ["GH010006", "GH020006","GH030006","GH040006","GH050006","GH060006","GH070006","GH080006","GH090006"]
-    
+    filenames = ["GH010006","GH020006","GH030006","GH040006","GH050006","GH060006","GH070006","GH080006","GH090006", "GH100006"]
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
         session = "Session_02152024" 
-        output_dir = f'/home/schivilkar/dev/processed_video/{session}/IntersectionC/{video}'
+        output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path2/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
 
-        input_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionC/{video}'
-        #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD/Video/gopro03/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
+        input_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/{video}'
     
         video_name = video +"_MUTED.MP4"
         video_path = os.path.join(input_dir, video_name)
@@ -47,10 +45,8 @@ if __name__ == '__main__':
             out = cv2.VideoWriter(output_filename, fourcc, 30.0, (crop_width*scaling_factor, crop_height*scaling_factor))  
   
         
-
         while True:
             _, im = capture.read()
-            
             if im is None:
                 break
 

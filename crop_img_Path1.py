@@ -10,9 +10,9 @@ if __name__ == '__main__':
     scaling_factor = 2
     
     # Define ROI (Region of Interest) coordinates 
-    x_start = 550
-    y_start = 350
-    x_end = 1200
+    x_start = 500
+    y_start = 200
+    x_end = 1300
     y_end = 900
 
     crop_width = x_end - x_start
@@ -20,18 +20,18 @@ if __name__ == '__main__':
 
     
     #filenames = ["GH010012","GH020012","GH040012","GH060012","GH080012","GH030012","GH050012","GH070012","GH090012"]   
+
     
-    filenames = ["GH010006"]
+    filenames = ["GH010011","GH020011","GH030011","GH040011","GH050011","GH060011","GH070011","GH080011","GH090011"]
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
         session = "Session_02152024" 
-        output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path2/{video}'
+        output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path1/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
 
-        input_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/{video}'
-        #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD/Video/gopro03/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
+        input_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path1/{video}'
     
         video_name = video +"_MUTED.MP4"
         video_path = os.path.join(input_dir, video_name)
@@ -48,15 +48,8 @@ if __name__ == '__main__':
             out = cv2.VideoWriter(output_filename, fourcc, 30.0, (crop_width*scaling_factor, crop_height*scaling_factor))  
   
         
-        count = 1
-
         while True:
             _, im = capture.read()
-            count = count +1
-            print(count)
-            if count > 50:
-                 
-                 break
             if im is None:
                 break
 
