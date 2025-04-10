@@ -168,34 +168,23 @@ class PedestrianTracker:
         return track_data, raw_detections, current_zone_tracks
 
 def setup_counting_zones(width, height, zone_config=None):
-    #For IntersectionB - Session 15th feb
-    zone_A = np.array([[475, 497], [738, 489],[1072, 527],[1075, 597], [232,718]], np.int32)
-    zoneD = np.array([[1070,526], [1058, 604],[1398, 719],[1847,662], [1844, 504], [1623,465]], np.int32)
-    zoneC = np.array([[260,699], [1040, 603],[1377, 703],[1833,719], [1840, 984], [19,986]], np.int32)  
-
-    # zone_A = np.array([[511, 371], [788, 353],[1104, 402],[1098, 491], [286,560]], np.int32)
-    # zoneC = np.array([[278,578], [1086, 486],[1405, 611],[1837,646], [1828, 949], [53,945]], np.int32)
-    # zoneD = np.array([[256,584], [1114, 405],[1132, 480],[1430,586], [1846, 433], [1820,413], [1671,370], [1122,399]], np.int32)  
-
-    #intersectionb for 22nd oct
-    # zone_A = np.array([[511, 371], [788, 353],[1104, 402],[1098, 491], [286,560]], np.int32)
-    # zoneC = np.array([[278,578], [1086, 486],[1405, 611],[1837,646], [1828, 949], [53,945]], np.int32)
-    # zoneD = np.array([[1124, 401],[1119, 487],[1474,603],[1839,640], [1839,431], [1687, 388], [1116,400]], np.int32) 
-    
-    # #For IntersectionC
-    # zone_A = np.array([[344, 537], [309, 649],[1242, 600],[1137, 517]], np.int32)
-    # zoneD = np.array([[1159, 513], [1251, 603],[1824, 533],[1687,482]], np.int32)
-    # zoneC = np.array([[297,685], [956, 642],[1584, 579],[1822,607], [1821, 946], [167,956], [208,743]], np.int32)  
-    return zone_A, zoneD, zoneC
+    zoneA = np.array([[406, 336], [791, 318],[1068, 397],[1050, 496], [130,577]], np.int32)								
+    zoneC = np.array([[132,589], [1060, 499],[1900, 800],[1910, 1000],[21,1000]], np.int32)								
+    zoneD = np.array([[1093, 387],[1075, 485],[1450,626], [1840, 486], [1657,408]], np.int32)								
+    return zoneA, zoneD, zoneC
 
 def process_video(video, output_video=True):
 
-    session="Session_02152024"
+    session="Session_12032024"
     output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionB/{video}'
     os.makedirs(output_dir, exist_ok=True)
-    os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionB/Video/gopro04/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionC/Video/gopro08/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
+
+    output_dir2 = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionB/FinalFlows'
+    os.makedirs(output_dir2, exist_ok=True)
+
+    os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionB/Video/gopro03/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
     video_name = video +"_MUTED.MP4"
+
     csv_name = video + "full_pedestrian_flow.csv"
     video_path = os.path.join(output_dir, video_name)
 
@@ -211,7 +200,7 @@ def process_video(video, output_video=True):
     tracker = PedestrianTracker()
     
     # Set up CSV for data logging
-    csv_path = os.path.join(output_dir, csv_name)
+    csv_path = os.path.join(output_dir2, csv_name)
     with open(csv_path, 'w', newline='') as f:
         writer_csv = csv.writer(f)
         writer_csv.writerow([
@@ -249,7 +238,6 @@ def process_video(video, output_video=True):
     
     # Initialize counters and tracking variables
     frame_count = 0
-    start_time = time.time()
     
     # Main processing loop
     while True:
@@ -419,18 +407,9 @@ def process_video(video, output_video=True):
     
 
 def main():
-    #For intersectionB
-    #video_list = ["GH030015", "GH050015","GH070015","GH090015"]
-    video_list = ["GH010015", "GH020015","GH040015","GH060015", "GH080015", "GH100015"]
-    #video_list = ["GH010006", "GH020006","GH030006","GH040006","GH050006","GH060006","GH070006","GH080006","GH090006"]
-    #video_list = ["GH010468","GH020468","GH030468","GH040468","GH050468","GH060468","GH070468","GH080468","GH090468","GH100468"]
-    
-    #For intersection C - Session_02292024 
-    #video_list = ["GH010061"]
-    #video_list = ["GH010008","GH020008","GH030008","GH040008","GH050008","GH060008","GH070008","GH080008","GH090008","GH100008"]
-    #video_list = ["GH010009","GH020009","GH030009","GH040009","GH050009","GH060009","GH070009","GH080009","GH090009","GH100009"]
-    #video_list = ["GH010017","GH020017","GH030017","GH040017","GH050017","GH060017","GH070017","GH080017","GH090017","GH100017"]
-    
+    #video_list = ["GH010018", "GH020018","GH030018","GH040018", "GH050018", "GH060018", "GH070018","GH080018", "GH090018", "GH100018"]
+    video_list = ["GH010015", "GH020015","GH030015","GH040015", "GH050015", "GH060015", "GH070015","GH080015", "GH090015", "GH100015", "GH110015", "GH120015", "GH130015", "GH140015", "GH150015"]
+
     total_start_time = time.time()
     for video in video_list:
         start_time = time.time()

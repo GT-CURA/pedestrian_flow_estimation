@@ -10,28 +10,28 @@ if __name__ == '__main__':
     scaling_factor = 2
     
     # Define ROI (Region of Interest) coordinates 
-    x_start = 550
+    x_start = 300
     y_start = 350
-    x_end = 1200
-    y_end = 900
+    x_end = 1820
+    y_end = 1080
 
     crop_width = x_end - x_start
     crop_height = y_end - y_start
 
     
-    filenames = ["GH010006","GH020006","GH030006","GH040006","GH050006","GH060006","GH070006","GH080006","GH090006", "GH100006"]
+    filenames = ["GH010010"]
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
-        session = "Session_02152024" 
+        session = "Session_10292024" 
         output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path2/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
 
-        input_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/{video}'
+        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path2/Video/gopro07/{v}.MP4' -an -c:v copy -t 15 '{out_dir}/{v}_MUTED15.MP4'".format(s=session, v=video, out_dir=output_dir)) 
     
-        video_name = video +"_MUTED.MP4"
-        video_path = os.path.join(input_dir, video_name)
+        video_name = video +"_MUTED15.MP4"
+        video_path = os.path.join(output_dir, video_name)
         capture = cv2.VideoCapture(video_path) 
 
         total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))    
@@ -58,6 +58,8 @@ if __name__ == '__main__':
             if output_video:
                 output_image_frame = cropped_im
                 out.write(output_image_frame)
+                frame_path = os.path.join(output_dir, 'draw_crop.jpg')
+                cv2.imwrite(frame_path, output_image_frame) 
                 
 
         capture.release()

@@ -10,28 +10,25 @@ from collections import defaultdict
 import torch
 from torchvision import models
 from torchvision import transforms
-
+    
 
 def setup_counting_zones(width, height, zone_config=None):
 
-    zoneA = np.array([[406, 336], [791, 318],[1068, 397],[1050, 496], [130,577]], np.int32)
-    zoneC = np.array([[132,589], [1060, 499],[1900, 800],[1910, 1000],[21,1000]], np.int32)
-    zoneD = np.array([[1093, 387],[1075, 485],[1450,626], [1840, 486], [1657,408]], np.int32)
-    return zoneA, zoneD, zoneC 
+   zoneA = np.array([[421, 155], [243, 263], [2652, 267], [2373, 124]], np.int32)						
+   zoneB = np.array([[2672, 267], [2393, 124], [3263, 120], [3327,257]], np.int32)						
+   zoneC = np.array([[250, 296],[250,1300], [3323, 1300], [3317, 283]], np.int32) 						
+   return zoneA, zoneB, zoneC
 
 def process_video(video, output_video=True):
 
     session="Session_12032024"
-    output_dir = f'/home/schivilkar/dev/processed_video/{session}/IntersectionB/{video}'
+    output_dir = f'/home/schivilkar/dev/processed_video/{session}/IntersectionC/{video}'
+    output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
+
     
     os.makedirs(output_dir, exist_ok=True)
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionB/Video/gopro04/{v}.MP4' -ss 15 -t 15 -an -c:v copy '{out_dir}/{v}_MUTED15s.MP4'".format(s=session, v=video, out_dir=output_dir))
-
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionB/Video/gopro03/{v}.MP4' -an -c:v copy -t 15 '{out_dir}/{v}_MUTED15s.MP4'".format(s=session, v=video, out_dir=output_dir)) 
-    
-    video_name = video+"_MUTED15s.MP4"
+    video_name = video+"_CROPPED.MP4"
     video_path = os.path.join(output_dir, video_name)
-
     cap = cv2.VideoCapture(video_path)
     frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -41,12 +38,10 @@ def process_video(video, output_video=True):
     print(frame_width)
     print(frame_height)
     
-    zoneA, zoneD, zoneC = setup_counting_zones(frame_width, frame_height)
+    zoneA, zoneB, zoneC = setup_counting_zones(frame_width, frame_height)
     
-    # Initialize counters and tracking variables
     frame_count = 0
     
-    # Main processing loop
     while True:
         ret, frame = cap.read()
         if not ret:
@@ -56,19 +51,18 @@ def process_video(video, output_video=True):
         
         if output_video:
             vis_frame = frame.copy()
-            # Draw zones
-            cv2.polylines(vis_frame, [zoneA], True, (255, 0, 0), 2)  # Zone A in blue
-            cv2.polylines(vis_frame, [zoneD], True, (0, 0, 255), 2)  # Zone D in red
-            cv2.polylines(vis_frame, [zoneC], True, (0, 255, 0), 2)  # Zone C in green
+            cv2.polylines(vis_frame, [zoneA], True, (255, 0, 0), 2) 
+            cv2.polylines(vis_frame, [zoneB], True, (0, 0, 255), 2)
+            cv2.polylines(vis_frame, [zoneC], True, (0, 255, 0), 2)
 
-            frame_path = os.path.join(output_dir, 'frame.jpg')
+            frame_path = os.path.join(output_dir, 'draw_zones.jpg')
             cv2.imwrite(frame_path, vis_frame) 
         
     cap.release()
     
+    
 def main():
-    video_list = ["GH010015"]
-
+    video_list = ["GH010010"]
     total_start_time = time.time()
     for video in video_list:
         start_time = time.time()

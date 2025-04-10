@@ -168,15 +168,14 @@ class PedestrianTracker:
         return track_data, raw_detections, current_zone_tracks
 
 def setup_counting_zones(width, height, zone_config=None):
-    #For IntersectionC - Session 15th feb
-    zoneA = np.array([[1615, 193], [1615, 327],[21, 382],[148, 245]], np.int32)
-    zoneB = np.array([[1620, 192], [1623, 317],[3032, 175],[2755, 112]], np.int32)
-    zoneC = np.array([[500, 880],[2965,800], [2962, 230], [550, 527]], np.int32) 
+    zoneA = np.array([[421, 155], [243, 263], [2652, 267], [2373, 124]], np.int32) 
+    zoneB = np.array([[2672, 267], [2393, 124], [3263, 120], [3327,257]], np.int32)					
+    zoneC = np.array([[250, 296],[250,1300], [3323, 1300], [3317, 283]], np.int32)						
     return zoneA, zoneB, zoneC
 
 def process_video(video, output_video=True):
 
-    session="Session_02152024"
+    session="Session_12032024"
     output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionC_final/{video}'
     os.makedirs(output_dir, exist_ok=True)
 
@@ -409,7 +408,7 @@ def process_video(video, output_video=True):
 
 def main():
     #For intersectionC - "GH020006","GH030006","GH040006","GH050006",
-    video_list = ["GH010006", "GH060006","GH070006","GH080006","GH090006"]
+    video_list = ["GH010010"]
    
     total_start_time = time.time()
     for video in video_list:
