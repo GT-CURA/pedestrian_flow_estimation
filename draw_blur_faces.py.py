@@ -73,7 +73,6 @@ class PedestrianTracker:
             'C_to_B': set()
         }
 
-        
         # Track previous zone location for each track
         self.track_previous_zone = {}
         self.frame_transitions = defaultdict(int)
@@ -178,15 +177,10 @@ def setup_counting_zones(width, height, zone_config=None):
 def process_video(video, output_video=True):
 
     session="Session_02292024"
-    output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionC/{video}'
+    output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionC_Blur/{video}'
     os.makedirs(output_dir, exist_ok=True)
-
-    output_dir_csv = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionC/FinalFlows'
-    os.makedirs(output_dir, exist_ok=True)
-    os.makedirs(output_dir_csv, exist_ok=True)
 
     output_dir2 = f'/home/schivilkar/dev/processed_video/{session}/IntersectionC/{video}'
-    csv_name = video + "full_pedestrian_flow.csv"
     video_path = os.path.join(output_dir2, video+"_CROPPED.MP4")
 
     cap = cv2.VideoCapture(video_path)
@@ -199,31 +193,6 @@ def process_video(video, output_video=True):
     zoneA, zoneB, zoneC = setup_counting_zones(frame_width, frame_height)
     
     tracker = PedestrianTracker()
-    
-    # Set up CSV for data logging
-    csv_path = os.path.join(output_dir_csv, csv_name)
-    with open(csv_path, 'w', newline='') as f:
-        writer_csv = csv.writer(f)
-        writer_csv.writerow([
-            'Frame', 
-            'Total_Detections',
-            'Total_Tracked',
-            'Zone_A_Count', 
-            'Zone_B_Count', 
-            'Zone_C_Count',
-            'A_to_B', 
-            'A_to_C', 
-            'B_to_A', 
-            'B_to_C',
-            'C_to_A', 
-            'C_to_B',
-            'Total_A_to_B', 
-            'Total_A_to_C', 
-            'Total_B_to_A', 
-            'Total_B_to_C',
-            'Total_C_to_A', 
-            'Total_C_to_B'
-        ])
     
     # Set up video writer if needed
     if output_video:
@@ -239,10 +208,9 @@ def process_video(video, output_video=True):
     
     # Initialize counters and tracking variables
     frame_count = 0
-    start_time = time.time()
     
     # Main processing loop
-    while True:
+    while True and frame_count < 1000:
         ret, frame = cap.read()
         if not ret:
             break
@@ -262,17 +230,41 @@ def process_video(video, output_video=True):
 
             for det in raw_detections:
                 x1, y1, x2, y2, conf = det
+                x1 = int(x1)
+                y1 = int(y1)
+                x2 = int(x2)
+                y2 = int(y2)
                 # Draw all raw detections in yellow
-                cv2.rectangle(vis_frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 1)
+                # cv2.rectangle(vis_frame, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 255), 1)
+                # cv2.putText(
+                #     vis_frame,
+                #     f"{conf:.2f}",
+                #     (int(x1), int(y1) - 5),
+                #     cv2.FONT_HERSHEY_SIMPLEX,
+                #     0.5,
+                #     (0, 255, 255),
+                #     1
+                # )
+
+                box_height = y2 - y1
+                blur_y2 = y1 + int(0.2 * box_height)
+                blur_region = vis_frame[y1:blur_y2, x1:x2]
+                if blur_region.size > 0:
+                    blurred = cv2.GaussianBlur(blur_region, (15, 15), 30)
+                    vis_frame[y1:blur_y2, x1:x2] = blurred
+
+                # Draw all raw detections in yellow
+                cv2.rectangle(vis_frame, (x1, y1), (x2, y2), (0, 255, 255), 1)
                 cv2.putText(
                     vis_frame,
                     f"{conf:.2f}",
-                    (int(x1), int(y1) - 5),
+                    (x1, y1 - 5),
                     cv2.FONT_HERSHEY_SIMPLEX,
                     0.5,
                     (0, 255, 255),
                     1
                 )
+
 
             for track_data in tracks:
                 track_id = track_data['id']
@@ -288,6 +280,13 @@ def process_video(video, output_video=True):
                 else:
                     color = (0, 255, 0)
                 
+                box_height = y2 - y1
+                blur_y2 = y1 + int(0.2 * box_height)
+                blur_region = vis_frame[y1:blur_y2, x1:x2]
+                if blur_region.size > 0:
+                    blurred = cv2.GaussianBlur(blur_region, (15, 15), 30)
+                    vis_frame[y1:blur_y2, x1:x2] = blurred
+
                 # Draw bounding box and ID
                 cv2.rectangle(vis_frame, (x1, y1), (x2, y2), color, 2)
                 cv2.putText(
@@ -380,47 +379,13 @@ def process_video(video, output_video=True):
                 frame_path = os.path.join(output_dir, f'frame_{frame_count:06d}.jpg')
                 cv2.imwrite(frame_path, vis_frame)
         
-        with open(csv_path, 'a', newline='') as f:
-            writer_csv = csv.writer(f)
-            writer_csv.writerow([
-                frame_count,
-                len(raw_detections),
-                len(tracks),
-                len(current_zone_tracks['A']),
-                len(current_zone_tracks['B']),
-                len(current_zone_tracks['C']),
-                tracker.frame_transitions['A_to_B'],
-                tracker.frame_transitions['A_to_C'],
-                tracker.frame_transitions['B_to_A'],
-                tracker.frame_transitions['B_to_C'],
-                tracker.frame_transitions['C_to_A'],
-                tracker.frame_transitions['C_to_B'],
-                tracker.total_zone_transitions['A_to_B'],
-                tracker.total_zone_transitions['A_to_C'],
-                tracker.total_zone_transitions['B_to_A'],
-                tracker.total_zone_transitions['B_to_C'],
-                tracker.total_zone_transitions['C_to_A'],
-                tracker.total_zone_transitions['C_to_B']
-            ])
-        
     cap.release()
     if output_video:
         writer.release()
     
 
 def main():
-    #For intersectionC - "GH020006","GH030006","GH040006","GH050006",
-    #video_list = ["GH010010"], "GH010061",
-    video_list = [
-                 "GH020061",
-                 "GH030061",
-                 "GH040061",
-                 "GH050061",
-                 "GH060061",
-                 "GH070061",
-                 "GH080061",
-                 "GH090061",
-                 "GH100061"]
+    video_list = ["GH010061"]
    
     total_start_time = time.time()
     for video in video_list:

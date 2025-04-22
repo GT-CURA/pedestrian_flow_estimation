@@ -8,7 +8,7 @@ if __name__ == '__main__':
     start_time = time.time()
     output_video = True
     scaling_factor = 2
-    
+
     x_start = 625
     y_start = 380
     x_end = 1820
@@ -17,20 +17,20 @@ if __name__ == '__main__':
     crop_width = x_end - x_start
     crop_height = y_end - y_start
     
-    #filenames = ["GH010007", "GH020007", "GH030007", "GH040007", "GH050007", "GH060007", "GH070007", "GH080007", "GH090007", "GH100007" ]
-    filenames = ["GH010013"]
+    filenames = ["GH060013", "GH070013", "GH080013", "GH090013"]
+    #filenames = ["GH010469", "GH020469", "GH030469", "GH040469", "GH050469", "GH060469", "GH070469", "GH080469", "GH090469", "GH100469"]
 
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
-        session = "Session_12032024" 
+        session = "Session_12032024"
         output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path1/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
 
-        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path1/Video/gopro06/{v}.MP4' -an -c:v copy -t 15 '{out_dir}/{v}_MUTED15.MP4'".format(s = session, v=video, out_dir=output_dir))
+        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path1/Video/gopro06/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
     
-        video_name = video + "_MUTED15.MP4"
+        video_name = video + "_MUTED.MP4"
         video_path = os.path.join(output_dir, video_name)
         capture = cv2.VideoCapture(video_path) 
 

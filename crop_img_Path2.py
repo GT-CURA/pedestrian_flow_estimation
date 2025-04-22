@@ -10,16 +10,22 @@ if __name__ == '__main__':
     scaling_factor = 2
     
     # Define ROI (Region of Interest) coordinates 
+    
+    # x_start = 480
+    # y_start = 470
+    # x_end = 1720
+    # y_end = 1080
+
     x_start = 300
     y_start = 350
     x_end = 1820
     y_end = 1080
 
+
     crop_width = x_end - x_start
     crop_height = y_end - y_start
 
-    
-    filenames = ["GH010010"]
+    filenames = ["GH080010","GH090010", "GH100010","GH110010"]
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
@@ -28,9 +34,9 @@ if __name__ == '__main__':
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
 
-        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path2/Video/gopro07/{v}.MP4' -an -c:v copy -t 15 '{out_dir}/{v}_MUTED15.MP4'".format(s=session, v=video, out_dir=output_dir)) 
+        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path2/Video/gopro07/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
     
-        video_name = video +"_MUTED15.MP4"
+        video_name = video +"_MUTED.MP4"
         video_path = os.path.join(output_dir, video_name)
         capture = cv2.VideoCapture(video_path) 
 
