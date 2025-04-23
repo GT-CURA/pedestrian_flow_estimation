@@ -25,7 +25,7 @@ if __name__ == '__main__':
     crop_width = x_end - x_start
     crop_height = y_end - y_start
 
-    filenames = ["GH080010","GH090010", "GH100010","GH110010"]
+    filenames = ["GH110010"]
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")

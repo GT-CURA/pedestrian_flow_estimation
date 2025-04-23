@@ -9,21 +9,25 @@ if __name__ == '__main__':
     output_video = True
     scaling_factor = 2
 
-    x_start = 625
-    y_start = 380
-    x_end = 1820
+    # x_start = 625
+    # y_start = 380
+    # x_end = 1820
+    # y_end = 1000
+
+    x_start = 600
+    y_start = 400
+    x_end = 1500
     y_end = 1000
 
     crop_width = x_end - x_start
     crop_height = y_end - y_start
     
-    filenames = ["GH060013", "GH070013", "GH080013", "GH090013"]
-    #filenames = ["GH010469", "GH020469", "GH030469", "GH040469", "GH050469", "GH060469", "GH070469", "GH080469", "GH090469", "GH100469"]
+    filenames = ["GH090012_anglechanged"]
 
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
-        session = "Session_12032024"
+        session = "Session_10222024"
         output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path1/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")

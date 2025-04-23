@@ -161,37 +161,18 @@ class PedestrianTracker:
         return track_data, raw_detections, current_zone_tracks
 
 def setup_counting_zones(width, height, zone_config=None):
-    #For Path1 and Path2
-    # zoneA = np.array([[150, 672], [1000, 425],[180, 200],[50, 200]], np.int32)
-    # zoneB = np.array([[150, 690], [1000, 450],[2300, 700],[2330,1550],[450, 1500]], np.int32)	
-    # zoneA = np.array([[145, 570], [988, 335],[163, 126],[10, 150]], np.int32)								
-    # zoneB = np.array([[152, 605], [990, 345],[2350, 600],[2330, 1240],[450, 1200]], np.int32)	
-
     zoneA = np.array([[155, 618], [1200, 376],[300, 159],[1, 215]], np.int32)
     zoneB = np.array([[155, 635], [1200, 400],[2950, 700],[3000, 1450],[450, 1450]], np.int32)
-						
-			
     return zoneA, zoneB
 
 def process_video(video, output_video=True):
 
     session="Session_10292024"
-    # output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path1_final/{video}'
-    # output_dir_csv = f'/home/schivilkar/dev/final_video_processing/{session}/Path1_final/FinalFlows'
-    # os.makedirs(output_dir, exist_ok=True)
-    # os.makedirs(output_dir_csv, exist_ok=True)
-
-    # #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path2/Video/gopro07/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
-    # output_dir2 = f'/home/schivilkar/dev/processed_video/{session}/Path1/{video}'
-    # csv_name = video + "full_pedestrian_flow.csv"
-    # video_path = os.path.join(output_dir2, video+"_CROPPED.MP4")
-
     output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/{video}'
     output_dir_csv = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/FinalFlows'
     os.makedirs(output_dir, exist_ok=True)
     os.makedirs(output_dir_csv, exist_ok=True)
 
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/Path2/Video/gopro07/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
     output_dir2 = f'/home/schivilkar/dev/processed_video/{session}/Path2/{video}'
     csv_name = video + "full_pedestrian_flow.csv"
     video_path = os.path.join(output_dir2, video+"_CROPPED.MP4")
@@ -392,19 +373,7 @@ def process_video(video, output_video=True):
 
 def main():
     #For Path1
-
-    #video_list = ["GH010011","GH020011","GH030011","GH040011","GH050011","GH060011","GH070011","GH080011","GH090011"]
-    #For Path2
-    #video_list = ["GH010007","GH020007","GH030007","GH040007","GH050007"  ,"GH060007" ,"GH070007" , "GH080007" ,"GH090007","GH100007"]
-    #video_list = ["GH010468","GH020468","GH030468","GH040468","GH050468","GH060468","GH070468","GH080468","GH090468","GH100468"] "GH010012", "GH020012", 
-    
-    #video_list = ["GH030012", "GH040012", "GH050012", "GH060012", "GH070012", "GH080012"]
-    #video_list = ["GH010469", "GH020469", "GH030469", "GH040469", "GH050469", "GH060469", "GH070469", "GH080469", "GH090469", "GH100469"]
-    #video_list = ["GH030013", "GH040013", "GH050013", "GH060013", "GH070013", "GH080013", "GH090013"]
-    #video_list = ["GH010008"]
-    #video_list = ["GH010009", "GH020009","GH030009","GH040009", "GH050009","GH060009","GH070009","GH080009","GH090009"]
-
-    video_list = ["GH010010", "GH020010","GH030010","GH040010", "GH050010","GH060010","GH070010","GH080010","GH090010", "GH100010","GH110010"]
+    video_list = ["GH100010"]
 
     total_start_time = time.time()
     for video in video_list:
