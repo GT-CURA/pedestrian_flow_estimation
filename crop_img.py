@@ -9,28 +9,38 @@ if __name__ == '__main__':
     output_video = True
     scaling_factor = 2
     
-    # Define ROI (Region of Interest) coordinates 
-    x_start = 300
-    y_start = 375
-    x_end = 1820
-    y_end = 1080
+    x_start = 450
+    y_start = 225
+    x_end = 1750
+    y_end = 850
+
 
     crop_width = x_end - x_start
     crop_height = y_end - y_start
 
-    filenames = ["GH010019"]   
+    #"GH010013","GH020013", "GH030013","GH040013",
+                #  "GH050013","GH060013",
+                #  "GH070013","GH080013",
+                #  "GH090013","GH100013",
+                #  "GH110013", ,"GH140013", "GH150013""GH110013","GH130013"
+                # ,"GH020016", "GH030016","GH040016",
+                #  "GH050016","GH060016",
+                #  "GH070016","GH080016",
+                #  "GH090016"
+
+    filenames = ["GH010016"]   
     
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
-        session = "Session_12032024" 
+        session = "Session_02292024" 
         output_dir = f'/home/schivilkar/dev/processed_video/{session}/IntersectionD/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
 
-        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD/Video/gopro04/{v}.MP4' -an -c:v copy -t 30 '{out_dir}/{v}_MUTED15.MP4'".format(s = session, v=video, out_dir=output_dir))
+        os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD1/Video/gopro04/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
     
-        video_name = video +"_MUTED15.MP4"
+        video_name = video +"_MUTED.MP4"
         video_path = os.path.join(output_dir, video_name)
         capture = cv2.VideoCapture(video_path) 
 
@@ -56,7 +66,7 @@ if __name__ == '__main__':
 
             cropped_im = cv2.resize(cropped_im, None, fx=scaling_factor, fy=scaling_factor, interpolation=cv2.INTER_CUBIC)
 
-            if output_video and count > 450:
+            if output_video:
                 output_image_frame = cropped_im
                 out.write(output_image_frame)
                 frame_path = os.path.join(output_dir, 'draw_frame.jpg')
@@ -68,6 +78,10 @@ if __name__ == '__main__':
         if output_video:
             out.release()
             cv2.destroyAllWindows()
+        
+        if os.path.exists(video_path):
+            os.remove(video_path)
+            print(f"Removed intermediate file: {video_path}")
 
         end_time = time.time()
         elapsed_time = end_time - start_time

@@ -174,22 +174,23 @@ class PedestrianTracker:
         return track_data, raw_detections, current_zone_tracks
 
 def setup_counting_zones(width, height, zone_config=None):
-    zoneE = np.array([[571,389], [1488, 460],[1595, 116],[1175, 85], [583,374]], np.int32)   
-    zoneA = np.array([[7, 459], [82, 402],[458, 424],[42, 653]], np.int32)
-    zoneC = np.array([[19,704], [200, 1300],[1100, 1050],[1384,488], [548, 414]], np.int32)  
-    zoneD = np.array([[1125, 1000], [1601, 241],[2000, 100],[1900,1000]], np.int32)
+    zoneE = np.array([[691, 345], [1636, 450],[1769, 27],[1286,4]], np.int32)
+    zoneA = np.array([[7, 385], [60, 348],[598, 374],[11, 643]], np.int32)
+    zoneC = np.array([[15,670], [641, 360],[1625, 477],[1250,1200], [26, 958]], np.int32)
+    zoneD = np.array([[1400, 862], [1826, 213],[2255, 67],[2261,959]], np.int32)	
+    					
     return zoneA, zoneD, zoneC, zoneE
 
 def process_video(video, output_video=True):
 
-    session="Session_02152024/"
-    output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionD_final/{video}'
+    session="Session_02292024/"
+    output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionD/{video}'
     output_dir2 = f'/home/schivilkar/dev/processed_video/{session}/IntersectionD/{video}'
-
     os.makedirs(output_dir, exist_ok=True)
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionD/Video/gopro03/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s = session, v=video, out_dir=output_dir))
-    #os.system("ffmpeg -i '/media/chan/backup_SSD2/ASPED.c/{s}/IntersectionC/Video/gopro08/{v}.MP4' -an -c:v copy '{out_dir}/{v}_MUTED.MP4'".format(s=session, v=video, out_dir=output_dir)) 
-    video_name = video +"_MUTED.MP4"
+
+    output_dir_csv = f'/home/schivilkar/dev/final_video_processing/{session}/IntersectionD/FinalFlows'
+    os.makedirs(output_dir_csv, exist_ok=True)
+
     csv_name = video + "full_pedestrian_flow.csv"
     video_path = os.path.join(output_dir2, video+"_CROPPED.MP4")
 
@@ -205,7 +206,7 @@ def process_video(video, output_video=True):
     tracker = PedestrianTracker()
     
     # Set up CSV for data logging
-    csv_path = os.path.join(output_dir, csv_name)
+    csv_path = os.path.join(output_dir_csv, csv_name)
     with open(csv_path, 'w', newline='') as f:
         writer_csv = csv.writer(f)
         writer_csv.writerow([
@@ -457,12 +458,28 @@ def process_video(video, output_video=True):
     cap.release()
     if output_video:
         writer.release()
-    
+    if os.path.exists(video_path):
+            os.remove(video_path)
+            print(f"Removed intermediate file: {video_path}")
+
 
 def main():
-    video_list = ["GH010012","GH020012","GH040012","GH060012","GH080012","GH030012","GH050012","GH070012","GH090012"]
-                  # "GH020012", "GH030012", "GH040012", "GH050012", "GH060012", "GH070012", "GH080012", "GH090012"]
-    #GH010012.MP4  GH020012.MP4  GH030012.MP4  GH040012.MP4  GH050012.MP4  GH060012.MP4  GH070012.MP4  GH080012.MP4  GH090012.MP4
+
+    #"GH010013","GH020013", "GH030013","GH040013",
+                #  "GH050013","GH060013",
+                #  "GH070013","GH080013",
+                #  "GH090013","GH100013",
+                #  "GH110013",
+                #  "GH120013", ,"GH140013","GH150013"
+
+    #video_list = ["GH120013"]  
+    # video_list = ["GH010014","GH020014", "GH030014","GH040014",
+    #              "GH050014","GH060014",
+    #              "GH070014","GH080014",
+    #              "GH090014"]  
+    # , "GH020016","GH030016", "GH040016", "GH050016", "GH060016", "GH070016", "GH080016","GH090016" 
+    
+    video_list = ["GH010016"]   
     total_start_time = time.time()
     for video in video_list:
         start_time = time.time()

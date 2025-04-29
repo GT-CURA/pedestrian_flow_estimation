@@ -161,13 +161,13 @@ class PedestrianTracker:
         return track_data, raw_detections, current_zone_tracks
 
 def setup_counting_zones(width, height, zone_config=None):
-    zoneA = np.array([[155, 618], [1200, 376],[300, 159],[1, 215]], np.int32)
-    zoneB = np.array([[155, 635], [1200, 400],[2950, 700],[3000, 1450],[450, 1450]], np.int32)
+    zoneA = np.array([[97, 425], [899, 348],[317, 20],[39, 24]], np.int32)							
+    zoneB = np.array([[105, 440], [905, 360],[2400, 700],[2460, 1200],[450, 1200]], np.int32)							
     return zoneA, zoneB
 
 def process_video(video, output_video=True):
 
-    session="Session_10292024"
+    session="Session_10222024"
     output_dir = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/{video}'
     output_dir_csv = f'/home/schivilkar/dev/final_video_processing/{session}/Path2/FinalFlows'
     os.makedirs(output_dir, exist_ok=True)
@@ -369,11 +369,14 @@ def process_video(video, output_video=True):
     cap.release()
     if output_video:
         writer.release()
+    if os.path.exists(video_path):
+            os.remove(video_path)
+            print(f"Removed intermediate file: {video_path}")
     
 
 def main():
     #For Path1
-    video_list = ["GH100010"]
+    video_list = ["GH100009_anglechanged"]
 
     total_start_time = time.time()
     for video in video_list:

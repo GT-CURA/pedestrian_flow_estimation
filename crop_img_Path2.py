@@ -10,26 +10,20 @@ if __name__ == '__main__':
     scaling_factor = 2
     
     # Define ROI (Region of Interest) coordinates 
-    
-    # x_start = 480
-    # y_start = 470
-    # x_end = 1720
-    # y_end = 1080
-
-    x_start = 300
-    y_start = 350
-    x_end = 1820
+    x_start = 480
+    y_start = 470
+    x_end = 1720
     y_end = 1080
 
 
     crop_width = x_end - x_start
     crop_height = y_end - y_start
 
-    filenames = ["GH110010"]
+    filenames = ["GH100009_anglechanged"]
     # Loop through videos 
     for video in filenames:
         print(f"Start processing {video}...")
-        session = "Session_10292024" 
+        session = "Session_10222024" 
         output_dir = f'/home/schivilkar/dev/processed_video/{session}/Path2/{video}'
         os.makedirs(output_dir, exist_ok=True)
         output_filename = os.path.join(output_dir, video+"_CROPPED.MP4")
@@ -64,7 +58,7 @@ if __name__ == '__main__':
             if output_video:
                 output_image_frame = cropped_im
                 out.write(output_image_frame)
-                frame_path = os.path.join(output_dir, 'draw_crop.jpg')
+                frame_path = os.path.join(output_dir, 'cropped.jpg')
                 cv2.imwrite(frame_path, output_image_frame) 
                 
 
@@ -73,6 +67,9 @@ if __name__ == '__main__':
         if output_video:
             out.release()
             cv2.destroyAllWindows()
+        if os.path.exists(video_path):
+            os.remove(video_path)
+            print(f"Removed intermediate file: {video_path}")
 
         end_time = time.time()
         elapsed_time = end_time - start_time
