@@ -1,0 +1,1 @@
+{"target": "B_to_P1", "lag": 5, "columns": ["B_to_P1", "P1_to_B", "C_to_B", "B_to_C", "recorder1_9m_b", "recorder2_9m_b", "recorder3_9m_b", "recorder1_9m_p1", "recorder2_9m_p1", "recorder1_9m_c", "recorder2_9m_c"], "experiment": "both", "timestamp": "2026-02-27T16:54:31.809134"}
